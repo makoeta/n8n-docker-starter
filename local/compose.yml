@@ -1,0 +1,67 @@
+services:
+  n8n:
+    name: n8n
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    ports:
+      - "127.0.0.1:5678:5678"
+    environment:
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_HOST=127.0.0.1:5678
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - WEBHOOK_URL=http://127.0.0.1:5678/
+      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+      - TZ=${GENERIC_TIMEZONE}
+    volumes:
+      - n8n:/home/node/.n8n
+      - ./local-files:/files
+    env_file:
+      - path: .env
+        required: true
+  
+  ollama:
+    name: ollama
+    image: ollama/ollama:latest
+    restart: always
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    entrypoint: /bin/sh
+    command: >
+      -c "ollama serve & 
+      sleep 5; 
+      ollama pull llama3.2:latest; 
+      wait"
+  
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: always
+    container_name: qdrant
+    ports:
+      - 6333:6333
+      - 6334:6334
+    expose:
+      - 6333
+      - 6334
+      - 6335
+    configs:
+      - source: qdrant_config
+        target: /qdrant/config/production.yaml
+    volumes:
+      - qdrant:/qdrant/storage
+
+configs:
+  qdrant_config:
+    content: |
+      log_level: INFO
+
+volumes:
+  n8n:
+    name: n8n_data
+  ollama:
+    name: ollama_data
+  qdrant:
+    name: qdrant_data
