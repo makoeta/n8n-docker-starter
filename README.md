@@ -15,7 +15,8 @@ Of course, you will need Docker installed on your system to run the setup. If yo
 
 1. Clone the repository
 2. Use your terminal and go to the "local" directory
-3. Run "docker compose up"
+3. Copy the ".env.example" content to a ".env" file (you maybe want to adjust your timezone!)
+4. Run "docker compose up"
 
 You're all set! n8n is now running locally at http://localhost:5678/.
 Ollama is downloading the llama3.2:latest model. This may take a while, but you can set up the credentials for Ollama and Qdrant in n8n. To do so, set up your n8n, create your first workflow, and go to an Ollama or Qdrant node. Click on "+ Create new credentials". The URLs are as follows:
